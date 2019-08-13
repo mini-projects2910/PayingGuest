@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "77978657417",
+    "firebase_url": "https://paying-guest-c87f8.firebaseio.com",
+    "project_id": "paying-guest-c87f8",
+    "storage_bucket": "paying-guest-c87f8.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:77978657417:android:219119bb857dc056",
+        "android_client_info": {
+          "package_name": "com.example.payingguest"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "77978657417-ucts26oatcmpfmbl3i5rudkg3d3pd3sq.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBJ4Oj214EKPi3o3Zlf0Xiy_2nuUV-Rh3o"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "77978657417-ucts26oatcmpfmbl3i5rudkg3d3pd3sq.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
