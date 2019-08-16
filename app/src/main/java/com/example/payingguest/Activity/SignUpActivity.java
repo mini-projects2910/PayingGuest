@@ -11,12 +11,17 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.example.payingguest.R;
 import com.example.payingguest.Model.User;
+import com.google.firebase.FirebaseException;
+import com.google.firebase.auth.PhoneAuthCredential;
+import com.google.firebase.auth.PhoneAuthProvider;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.rengwuxian.materialedittext.MaterialEditText;
+
+import java.util.concurrent.TimeUnit;
 
 
 public class SignUpActivity extends AppCompatActivity {
@@ -26,7 +31,10 @@ public class SignUpActivity extends AppCompatActivity {
     private ProgressDialog progressDialog;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference usertable;
-    String verificationCode;
+
+    PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallback;
+    String verification_code;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -36,7 +44,7 @@ public class SignUpActivity extends AppCompatActivity {
         etusername = findViewById(R.id.et_name);
         etpassword = findViewById(R.id.et_password);
         etcpassword =  findViewById(R.id.et_cpassword);
-        bsignup = findViewById(R.id.btn_signup);
+        bsignup = findViewById(R.id.btn_sign_up);
 
         progressDialog = new ProgressDialog(SignUpActivity.this);
 
@@ -95,9 +103,60 @@ public class SignUpActivity extends AppCompatActivity {
         });
 
     }
+    private void sendmsg(View view) {
+        String phone = etphoneno.getText().toString().trim();
 
+        if (phone.isEmpty()) {
+            etphoneno.setError("Phone number is required!");
+            etphoneno.requestFocus();
+            return;
+        }
+
+        if (phone.length() < 10) {
+            etphoneno.setError("Please enter a valid phone number!");
+            etphoneno.requestFocus();
+            return;
+        }
+
+
+        PhoneAuthProvider.getInstance().verifyPhoneNumber(
+                phone,        // Phone number to verify
+                60,                 // Timeout duration
+                TimeUnit.SECONDS,   // Unit of timeout
+                this,               // Activity (for callback binding)
+                mCallbacks);        // OnVerificationStateChangedCallbacks
+    }
+
+    PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks =
+            new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
+
+        @Override
+        public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
+
+        }
+
+        @Override
+        public void onVerificationFailed(FirebaseException e) {
+
+        }
+
+        @Override
+        public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+            super.onCodeSent(s, forceResendingToken);
+
+            verification_code = s;
+            Toast.makeText(SignUpActivity.this, "code send", Toast.LENGTH_SHORT).show();
+
+            Intent intent = new Intent(SignUpActivity.this, OtpActivity.class);
+            intent.putExtra("phonenumber", etphoneno.getText().toString());
+            intent.putExtra("password", etpassword.getText().toString().trim());
+            intent.putExtra("username", etusername.getText().toString().trim());
+            intent.putExtra("code",verification_code);
+            startActivity(intent);
+        }
+    };
     private void onLoginFailed() {
-        Toast.makeText(getBaseContext(), "Login failed try again Please check your phone number and password!", Toast.LENGTH_LONG).show();
+        Toast.makeText(getBaseContext(), "Login failed. Please check your phone number and password!", Toast.LENGTH_LONG).show();
 
         bsignup.setEnabled(true);
     }

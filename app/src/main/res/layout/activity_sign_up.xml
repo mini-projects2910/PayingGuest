@@ -83,7 +83,7 @@
     </LinearLayout>
 
     <Button
-        android:id="@+id/btn_signup"
+        android:id="@+id/btn_sign_up"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
