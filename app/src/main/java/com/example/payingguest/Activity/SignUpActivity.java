@@ -3,8 +3,10 @@ package com.example.payingguest.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -28,6 +30,7 @@ public class SignUpActivity extends AppCompatActivity {
 
     private MaterialEditText etphoneno, etusername, etpassword, etcpassword;
     private Button bsignup;
+    private TextView tvsignin;
     private ProgressDialog progressDialog;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference usertable;
@@ -45,12 +48,19 @@ public class SignUpActivity extends AppCompatActivity {
         etpassword = findViewById(R.id.et_password);
         etcpassword =  findViewById(R.id.et_cpassword);
         bsignup = findViewById(R.id.btn_sign_up);
-
+        tvsignin = findViewById(R.id.tv_Sign_In);
         progressDialog = new ProgressDialog(SignUpActivity.this);
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         usertable = firebaseDatabase.getReference("User");
 
+        tvsignin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(SignUpActivity.this, SignInActivity.class);
+                startActivity(intent);
+            }
+        });
         bsignup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -58,9 +68,7 @@ public class SignUpActivity extends AppCompatActivity {
                     onLoginFailed();
                     return;
                 } else {
-
-
-                    if (etpassword.getText().toString().equals(etcpassword.getText().toString())) {
+                     if (etpassword.getText().toString().equals(etcpassword.getText().toString())) {
 
                         progressDialog.setMessage("Please wait...");
                         progressDialog.show();
@@ -73,17 +81,8 @@ public class SignUpActivity extends AppCompatActivity {
                                     progressDialog.dismiss();
                                     Toast.makeText(SignUpActivity.this, "Phone Number already registered", Toast.LENGTH_SHORT).show();
 
-
                                 } else {
-
-                                    progressDialog.dismiss();
-                                    User user = new User(etusername.getText().toString(), etpassword.getText().toString(), etphoneno.getText().toString());
-                                    usertable.child(etphoneno.getText().toString()).setValue(user);
-                                    Intent main = new Intent(SignUpActivity.this, SignInActivity.class);
-                                    startActivity(main);
-                                    Toast.makeText(SignUpActivity.this, "Sign Up Successfully !", Toast.LENGTH_SHORT).show();
-                                    finish();
-
+                                   sendOTP();
                                 }
                             }
 
@@ -103,7 +102,7 @@ public class SignUpActivity extends AppCompatActivity {
         });
 
     }
-    private void sendmsg(View view) {
+    private void sendOTP(){
         String phone = etphoneno.getText().toString().trim();
 
         if (phone.isEmpty()) {
@@ -120,41 +119,43 @@ public class SignUpActivity extends AppCompatActivity {
 
 
         PhoneAuthProvider.getInstance().verifyPhoneNumber(
-                phone,        // Phone number to verify
+                "+91"+ phone,        // Phone number to verify
                 60,                 // Timeout duration
                 TimeUnit.SECONDS,   // Unit of timeout
                 this,               // Activity (for callback binding)
                 mCallbacks);        // OnVerificationStateChangedCallbacks
     }
-
     PhoneAuthProvider.OnVerificationStateChangedCallbacks mCallbacks =
             new PhoneAuthProvider.OnVerificationStateChangedCallbacks() {
 
-        @Override
-        public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
+                @Override
+                public void onVerificationCompleted(PhoneAuthCredential phoneAuthCredential) {
+                }
+                @Override
+                public void onVerificationFailed(FirebaseException e) {
+                    progressDialog.dismiss();
+                    Log.e("fail", "onVerificationFailed: " + e.getMessage());
+                    Toast.makeText(SignUpActivity.this, e.getMessage(), Toast.LENGTH_SHORT).show();
+                }
 
-        }
+                @Override
+                public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
+                    super.onCodeSent(s, forceResendingToken);
 
-        @Override
-        public void onVerificationFailed(FirebaseException e) {
+                    verification_code = s;
+                    Toast.makeText(SignUpActivity.this, "Verification code send", Toast.LENGTH_SHORT).show();
 
-        }
+                    Intent intent = new Intent(SignUpActivity.this, OtpActivity.class);
+                    intent.putExtra("phonenumber", etphoneno.getText().toString());
+                    intent.putExtra("password", etpassword.getText().toString().trim());
+                    intent.putExtra("username", etusername.getText().toString().trim());
+                    intent.putExtra("code",verification_code);
+                    startActivity(intent);
+                }
+            };
 
-        @Override
-        public void onCodeSent(String s, PhoneAuthProvider.ForceResendingToken forceResendingToken) {
-            super.onCodeSent(s, forceResendingToken);
 
-            verification_code = s;
-            Toast.makeText(SignUpActivity.this, "code send", Toast.LENGTH_SHORT).show();
 
-            Intent intent = new Intent(SignUpActivity.this, OtpActivity.class);
-            intent.putExtra("phonenumber", etphoneno.getText().toString());
-            intent.putExtra("password", etpassword.getText().toString().trim());
-            intent.putExtra("username", etusername.getText().toString().trim());
-            intent.putExtra("code",verification_code);
-            startActivity(intent);
-        }
-    };
     private void onLoginFailed() {
         Toast.makeText(getBaseContext(), "Login failed. Please check your phone number and password!", Toast.LENGTH_LONG).show();
 
@@ -184,4 +185,6 @@ public class SignUpActivity extends AppCompatActivity {
 
         return valid;
     }
+
+
 }

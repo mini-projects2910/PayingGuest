@@ -7,6 +7,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CheckBox;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.payingguest.Model.User;
@@ -20,12 +22,15 @@ import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.rengwuxian.materialedittext.MaterialEditText;
 
+import io.paperdb.Paper;
+
 public class SignInActivity extends AppCompatActivity {
 
-    MaterialEditText etphone;
-    MaterialEditText etpassword;
-    Button btnsignin;
-
+    private MaterialEditText etphone;
+    private MaterialEditText etpassword;
+    private Button btnsignin;
+    private TextView tvsignup;
+    private CheckBox checkBox;
     private ProgressDialog progressDialog;
     private FirebaseDatabase firebaseDatabase;
     private DatabaseReference usertable;
@@ -37,12 +42,21 @@ public class SignInActivity extends AppCompatActivity {
         etphone = findViewById(R.id.et_phone);
         etpassword = findViewById(R.id.et_password);
         btnsignin = findViewById(R.id.btn_sign_in);
-
+        tvsignup = findViewById(R.id.tv_Sign_Up);
+        checkBox = findViewById(R.id.ckbRemeber);
+        Paper.init(this);
         progressDialog = new ProgressDialog(SignInActivity.this);
 
         firebaseDatabase = FirebaseDatabase.getInstance();
         usertable = firebaseDatabase.getReference("User");
 
+        tvsignup.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent=new Intent(SignInActivity.this,SignUpActivity.class);
+                startActivity(intent);
+            }
+        });
         btnsignin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(final View v) {
@@ -51,6 +65,10 @@ public class SignInActivity extends AppCompatActivity {
                     return;
                 } else {
 
+                    if (checkBox.isChecked()) {
+                        Paper.book().write(Common.USER_KEY, etphone.getText().toString());
+                        Paper.book().write(Common.PWD_KEY, etpassword.getText().toString());
+                    }
                     progressDialog.setMessage("Please wait...");
                     progressDialog.show();
 
@@ -62,7 +80,7 @@ public class SignInActivity extends AppCompatActivity {
                             if (dataSnapshot.child(etphone.getText().toString().trim()).exists()) {
 
 
-                                User user = dataSnapshot.child(String.valueOf(etphone.getText().toString())).getValue(User.class);
+                                User user = dataSnapshot.child(etphone.getText().toString()).getValue(User.class);
                                 if (!etpassword.getText().toString().isEmpty()) {
                                     if (user.getPassword().equals(etpassword.getText().toString().trim())) {
 
