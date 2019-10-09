@@ -23,5 +23,7 @@
     <string name="phone_number">Phone Number</string>
     <string name="new_user_sign_up_here">New user? Sign Up Here.</string>
     <string name="remember_me">Remember me</string>
+    <string name="open">Open</string>
+    <string name="close">Close</string>
 
 </resources>

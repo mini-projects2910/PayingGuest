@@ -48,7 +48,7 @@
             app:met_singleLineEllipsis="true"
             app:met_textColorHint="@color/white" />
 
-        <com.rey.material.widget.CheckBox
+        <CheckBox
             android:id="@+id/ckbRemeber"
             style="@style/Material.Drawable.CheckBox"
             android:layout_width="wrap_content"
@@ -57,7 +57,7 @@
             android:text="@string/remember_me"
             android:textColor="@android:color/white"
             app:cbd_strokeColor="@android:color/white"
-            app:cbd_tickColor="@color/colorPrimaryDark" />
+            app:cbd_tickColor="@color/white" />
 
     </LinearLayout>
 

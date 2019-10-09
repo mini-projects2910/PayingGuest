@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:ignore="GoogleAppIndexingWarning">
-
+        <activity android:name=".Activity.Home" />
         <activity android:name=".Activity.OtpActivity" />
         <activity android:name=".Activity.MainActivity" />
         <activity android:name=".Activity.SignInActivity" />

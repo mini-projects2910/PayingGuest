@@ -131,14 +131,14 @@ public class SignInActivity extends AppCompatActivity {
         String upassword = etpassword.getText().toString();
         String phone = etphone.getText().toString();
 
-        if (upassword.isEmpty() || upassword.length() < 5 || upassword.length() > 5) {
+        if (upassword.length() != 5) {
             etpassword.setError("5 alphanumeric characters");
             valid = false;
         } else {
             etpassword.setError(null);
         }
 
-        if (phone.isEmpty() || phone.length() < 10 || phone.length() > 10) {
+        if (phone.length() != 10) {
             etphone.setError("10 alphanumeric characters");
             valid = false;
         } else {
